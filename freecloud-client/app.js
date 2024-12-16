@@ -3,8 +3,10 @@
 // by only storing the file_id provided by telegram in our database
 
 
-document.getElementById("fileInput")?.addEventListener("change", (e) => {
+document.querySelector("input#fileInput").addEventListener("change", (e) => {
     const file = e.target.files[0];
+    console.log("getting file...");
+    console.log(file);
 
     if (file) {
         const reader = new FileReader();
