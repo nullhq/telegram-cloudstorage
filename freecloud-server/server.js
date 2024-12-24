@@ -59,7 +59,11 @@ const server = createServer(async (req, res) => {
                         const fileId = tgSendPhotoResponse.result.document.file_id;
                         const userId = tgSendPhotoResponse.result.chat.id;
 
-                        await fs.writeFile("./db.json", JSON.stringify({ id: userId, photo_id: fileId }), "utf-8");
+                        const db = await fs.readFile("./db.json", "utf-8");
+                        const filteredDb = JSON.parse(db).filter((user) => user.id !== userId);;
+                        filteredDb.push({ id: userId, photo_id: fileId });
+
+                        await fs.writeFile("./db.json", JSON.stringify(filteredDb), "utf-8");
                         res.writeHead(201, { "Content-Type": "application/json" });
                         res.end(JSON.stringify({ file_id: fileId }));
                     } else {
