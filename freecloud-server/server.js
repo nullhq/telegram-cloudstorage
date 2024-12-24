@@ -4,10 +4,8 @@ import url from "url";
 import fs from "node:fs/promises";
 import { pipeline } from "stream";
 import { promisify } from "util";
-import dotenv from "dotenv";
-dotenv.config();
+import { TOKEN, PORT } from "./dotenv";
 
-const port = 3000;
 const pipelineAsync = promisify(pipeline);
 
 const server = createServer(async (req, res) => {
@@ -40,7 +38,7 @@ const server = createServer(async (req, res) => {
             const bodyBuffer = Buffer.concat(chunks);
             const options = {
                 hostname: "api.telegram.org",
-                path: `/bot${process.env.TOKEN}/sendDocument`,
+                path: `/bot${TOKEN}/sendDocument`,
                 method: "POST",
                 headers: {
                     "Content-Type": `multipart/form-data; boundary=${boundary}`,
@@ -102,7 +100,7 @@ const server = createServer(async (req, res) => {
         const fileId = path.split("/")[2];
         if (!fileId) return;
 
-        const tgGetFilePathReq = https.get(`https://api.telegram.org/bot${process.env.TOKEN}/getFile?file_id=${fileId}`, (tgGetFilePathRes) => {
+        const tgGetFilePathReq = https.get(`https://api.telegram.org/bot${TOKEN}/getFile?file_id=${fileId}`, (tgGetFilePathRes) => {
             const tgGetFilePathChunks = [];
             tgGetFilePathRes.on("data", (chunk) => tgGetFilePathChunks.push(chunk));
             tgGetFilePathRes.on("end", async () => {
@@ -111,7 +109,7 @@ const server = createServer(async (req, res) => {
 
                 if (tgGetFilePathResponse.ok) {
                     const { file_path } = tgGetFilePathResponse.result;
-                    const file_url = `https://api.telegram.org/file/bot${process.env.TOKEN}/${file_path}`;
+                    const file_url = `https://api.telegram.org/file/bot${TOKEN}/${file_path}`;
                     const tgFileRes = await fetch(file_url);
 
                     let contentType = tgFileRes.headers.get("content-type");
@@ -144,5 +142,5 @@ const server = createServer(async (req, res) => {
 });
 
 server.listen(port, () => {
-    console.log(`Ok! I'm running on http://localhost:${port} 🚀`);
+    console.log(`Ok! I'm running on http://localhost:${PORT} 🚀`);
 });
