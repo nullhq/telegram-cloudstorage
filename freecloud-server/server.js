@@ -1,7 +1,7 @@
 import { createServer } from "http";
 import https from "https";
 import url from "url";
-import fs from "fs:promises";
+import fs from "node:fs/promises";
 import { pipeline } from "stream";
 import { promisify } from "util";
 import dotenv from "dotenv";
@@ -88,7 +88,7 @@ const server = createServer(async (req, res) => {
         if (!userId) return;
 
         const db = await fs.readFile("./db.json", "utf-8");
-        const currentUser = JSON.parse(db).find((user) => user.id === userId);
+        const currentUser = JSON.parse(db).find((user) => user.id == userId);
 
         if (currentUser) {
             res.writeHead(200, { "Content-Type": "application/json" });
@@ -102,7 +102,7 @@ const server = createServer(async (req, res) => {
         const fileId = path.split("/")[2];
         if (!fileId) return;
 
-        const tgGetFilePathReq = https.get(`https.get(https://api.telegram.org/bot${process.env.TOKEN}/getFile?file_id=${fileId}`, (tgGetFilePathRes) => {
+        const tgGetFilePathReq = https.get(`https://api.telegram.org/bot${process.env.TOKEN}/getFile?file_id=${fileId}`, (tgGetFilePathRes) => {
             const tgGetFilePathChunks = [];
             tgGetFilePathRes.on("data", (chunk) => tgGetFilePathChunks.push(chunk));
             tgGetFilePathRes.on("end", async () => {
