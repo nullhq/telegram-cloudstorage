@@ -1,6 +1,7 @@
 import { createServer } from "http";
 import https from "https";
 import url from "url";
+import fs from "fs:promises";
 import { pipeline } from "stream";
 import { promisify } from "util";
 import dotenv from "dotenv";
@@ -50,13 +51,17 @@ const server = createServer(async (req, res) => {
             const tgSendPhotoReq = https.request(options, (tgSendPhotoRes) => {
                 const tgChunks = [];
                 tgSendPhotoRes.on("data", (chunk) => tgChunks.push(chunk));
-                tgSendPhotoRes.on("end", () => {
+                tgSendPhotoRes.on("end", async () => {
                     const tgSendPhotoBody = Buffer.concat(tgChunks).toString();
                     const tgSendPhotoResponse = JSON.parse(tgSendPhotoBody);
 
                     if (tgSendPhotoResponse.ok) {
+                        const fileId = tgSendPhotoResponse.result.document.file_id;
+                        const userId = tgSendPhotoResponse.result.chat.id;
+
+                        await fs.writeFile("./db.json", JSON.stringify({ id: userId, photo_id: fileId }), "utf-8");
                         res.writeHead(201, { "Content-Type": "application/json" });
-                        res.end(JSON.stringify({ file_id: tgSendPhotoResponse.result.document.file_id }));
+                        res.end(JSON.stringify({ file_id: fileId }));
                     } else {
                         res.writeHead(400, { "Content-Type": "application/json" });
                         res.end(JSON.stringify({ error: "Telegram API error", details: tgSendPhotoResponse }));
