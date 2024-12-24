@@ -19,7 +19,7 @@ const server = createServer(async (req, res) => {
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-    // Gérer les requêtes OPTIONS (pré-vol pour CORS)
+    // handle cors preflight request
     if (method === "OPTIONS") {
         res.writeHead(204);
         res.end();
