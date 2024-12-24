@@ -1,17 +1,34 @@
-// make requeest to upload the new profile picture
-// and update the user's profile picture
-// by only storing the file_id provided by telegram in our database
+// load telegram features
+// user info for Telegram sdk 
 
-document.onload = async () => {
+window.onload = async () => {
     if (window.Telegram.WebApp) {
         window.Telegram.WebApp.expand();
-        const { firstname, lastname, username, photo_url } = window.Telegram.WebApp.user;
-        document.querySelector(".profile__header img").src = photo_url;
+        const { id, firstname, lastname, username, photo_url } = window.Telegram.WebApp.initDataUnsafe.user;
         document.querySelector(".profile__header h1").textContent = `${firstname} ${lastname}`;
         document.querySelector(".profile__header p").textContent = `@${username}`;
+        try {
+            const response = await fetch(`http://localhost:3000/profiles/${id}`);
+            const data = await response.json();
+            if (response.ok) {
+                const { photo_id } = data;
+                document.querySelector(".profile__header img").src = `http://localhost:3000/files/${photo_id}`;
+            } else {
+                console.warn("error while fetching profile data.");
+                document.querySelector(".profile__header img").src = photo_url;
+            }
+        } catch (error) {
+            console.error("error fetching profile data:", error);
+            document.querySelector(".profile__header img").src = photo_url;
+        }
+    } else {
+        console.warn("We're not inside Telegram.");
     }
 };
 
+// make requeest to upload the new profile picture
+// and update the user's profile picture
+// by only storing the file_id provided by telegram in our database
 
 document.querySelector("input#fileInput").addEventListener("change", async (e) => {
     const file = e.target.files[0];
@@ -33,14 +50,14 @@ document.querySelector("input#fileInput").addEventListener("change", async (e) =
                 body: formData,
             });
 
-            const data = JSON.parse(response);
-            if (data.ok) {
-                console.log("photo has been sucessfull sent :", data);
+            const data = await response.json();
+            if (response.ok) {
+                console.log("photo has been sucessfull sent to the backend:", data);
             } else {
-                console.warn("error while sending phto:", data.description);
+                console.warn("error while uploading photo:", data.description);
             }
         } catch (error) {
-            console.error("error during the request :", error);
+            console.error("error during the request:", error);
         }
     }
 });
