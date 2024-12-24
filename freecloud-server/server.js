@@ -83,6 +83,60 @@ const server = createServer(async (req, res) => {
             tgSendPhotoReq.end();
         });
 
+    } else if (path.startsWith("/profiles/") && method === "GET") {
+        const userId = path.split("/")[2];
+        if (!userId) return;
+
+        const db = await fs.readFile("./db.json", "utf-8");
+        const currentUser = JSON.parse(db).find((user) => user.id === userId);
+
+        if (currentUser) {
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify(currentUser));
+        } else {
+            res.writeHead(404, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: "User not found" }));
+        }
+
+    } else if (path.startsWith("/files/") && method === "GET") {
+        const fileId = path.split("/")[2];
+        if (!fileId) return;
+
+        const tgGetFilePathReq = https.get(`https.get(https://api.telegram.org/bot${process.env.TOKEN}/getFile?file_id=${fileId}`, (tgGetFilePathRes) => {
+            const tgGetFilePathChunks = [];
+            tgGetFilePathRes.on("data", (chunk) => tgGetFilePathChunks.push(chunk));
+            tgGetFilePathRes.on("end", async () => {
+                const tgGetFilePathBody = Buffer.concat(tgGetFilePathChunks).toString();
+                const tgGetFilePathResponse = JSON.parse(tgGetFilePathBody);
+
+                if (tgGetFilePathResponse.ok) {
+                    const { file_path } = tgGetFilePathResponse.result;
+                    const file_url = `https://api.telegram.org/file/bot${process.env.TOKEN}/${file_path}`;
+                    const tgFileRes = await fetch(file_url);
+
+                    let contentType = tgFileRes.headers.get("content-type");
+                    if (file_path.endsWith(".jpg") || file_path.endsWith(".jpeg")) {
+                        contentType = "image/jpeg";
+                    } else if (file_path.endsWith(".png")) {
+                        contentType = "image/png";
+                    } else if (file_path.endsWith(".gif")) {
+                        contentType = "image/gif";
+                    }
+
+                    res.writeHead(200, { "Content-Type": contentType });
+                    await pipelineAsync(tgFileRes.body, res);
+                }
+            });
+        });
+
+        tgGetFilePathReq.on("error", (err) => {
+            console.error("Telegram API request failed:", err);
+            res.writeHead(500, { "Content-Type": "text/plain" });
+            res.end("Internal Server Error");
+        });
+
+        tgGetFilePathReq.end();
+    
     } else {
         res.writeHead(404, { "Content-Type": "text/plain" });
         res.end("Not Found");
