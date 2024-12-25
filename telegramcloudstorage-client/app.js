@@ -32,8 +32,9 @@ window.onload = async () => {
 
 document.querySelector("input#fileInput").addEventListener("change", async (e) => {
     const file = e.target.files[0];
+    const { id } = window.Telegram.WebApp.initDataUnsafe.user;
 
-    if (file) {
+    if (file && id) {
         const reader = new FileReader();
         reader.onload = (e) => {
             document.querySelector(".profile__header img").src = e.target.result;
@@ -41,7 +42,7 @@ document.querySelector("input#fileInput").addEventListener("change", async (e) =
         reader.readAsDataURL(file);
 
         const formData = new FormData();
-        formData.append("chat_id", "1839098668");
+        formData.append("chat_id", id);
         formData.append("document", file);
 
         try {
@@ -58,6 +59,8 @@ document.querySelector("input#fileInput").addEventListener("change", async (e) =
             }
         } catch (error) {
             console.error("error during the request:", error);
-        }
+        } 
+    } else {
+        console.warn("no file selected or user id not found.");
     }
 });
