@@ -55,7 +55,7 @@ document.querySelector("input#fileInput").addEventListener("change", async (e) =
             if (response.ok) {
                 console.log("photo has been sucessfull sent to the backend:", data);
             } else {
-                console.warn("error while uploading photo:", data.description);
+                console.warn("error while uploading photo: UNEXPECTED RESPONSE");
             }
         } catch (error) {
             console.error("error during the request:", error);
