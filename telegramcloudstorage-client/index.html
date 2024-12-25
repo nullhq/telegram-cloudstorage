@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://telegram.org/js/telegram-web-app.js?56"></script>
+    <script defer src="./app.js"></script>
+    <link rel="stylesheet" href="./style.css">
+    <title> freecloud ;) </title>
+</head>
+<body>
+    <div class="profile">
+        <div class="profile__header">
+            <img src="" alt="user profile picture" class="user__avatar">
+            <div class="user__info">
+                <h1 class="user_completname"></h1>
+                <p class="user_username"></p>
+            </div>
+        </div>
+
+        <div class="profile__body">
+            <input
+                type="file"
+                accept="image/*"
+                id="fileInput"
+                name="fileInput"
+                style="display: none;"
+            />
+            
+            <label for="fileInput" id="update_picture" class="button">
+                📸 Change Profile Photo
+            </label>
+        </div>
+    </div>
+</body>
+</html>
