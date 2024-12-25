@@ -1,0 +1,7 @@
+node_modules
+
+dotenv.js
+
+db.json
+
+package-lock.json

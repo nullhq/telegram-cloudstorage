@@ -1,0 +1,12 @@
+{
+  "name": "telegram-unlimited-cloudstorage",
+  "version": "1.0.0",
+  "description": "testing telegram unlimited cloud storage, this is the server side.",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "t.me/nullhq",
+  "license": "ISC"
+}
