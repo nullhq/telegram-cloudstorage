@@ -1,7 +1,7 @@
 import { createServer } from "http";
 import { pipeline } from "stream";
 import { promisify } from "util";
-import { TOKEN, PORT } from "./dotenv";
+import { TOKEN, PORT } from "./dotenv.js";
 import https from "https";
 import url from "url";
 import fs from "node:fs/promises";
@@ -141,6 +141,6 @@ const server = createServer(async (req, res) => {
     }
 });
 
-server.listen(port, () => {
+server.listen(PORT, () => {
     console.log(`Ok! I'm running on http://localhost:${PORT} 🚀`);
 });
