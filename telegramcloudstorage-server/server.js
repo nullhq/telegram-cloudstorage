@@ -1,10 +1,10 @@
 import { createServer } from "http";
-import https from "https";
-import url from "url";
-import fs from "node:fs/promises";
 import { pipeline } from "stream";
 import { promisify } from "util";
 import { TOKEN, PORT } from "./dotenv";
+import https from "https";
+import url from "url";
+import fs from "node:fs/promises";
 
 const pipelineAsync = promisify(pipeline);
 
