@@ -1,7 +1,7 @@
 import { createServer } from "http";
 import { pipeline } from "stream";
 import { promisify } from "util";
-import { TOKEN, PORT } from "./dotenv.js";
+import { TOKEN, PORT } from "./env.js";
 import https from "https";
 import url from "url";
 import fs from "node:fs/promises";
