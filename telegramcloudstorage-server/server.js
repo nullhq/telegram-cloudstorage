@@ -24,6 +24,9 @@ const server = createServer(async (req, res) => {
         return;
     }
 
+    // handle the request to upload the new profile picture
+    // here we well send file as document to save image quality
+    // after that it will be stored in telegram servers
     if (path === "/files" && method === "POST") {
         const boundary = req.headers["content-type"].split("boundary=")[1]; // cause the content-type will be something like this "multipart/form-data; boundary=----WebKitFormBoundaryKo9A0D0h8axP5XKA"
         if (!boundary) {
@@ -96,6 +99,9 @@ const server = createServer(async (req, res) => {
             res.end(JSON.stringify({ error: "User not found" }));
         }
 
+        // route to get user's profile picture using the file_id
+        // note that the only this that we store in our database is that fileId
+        // all our file are stored in telegram servers !!
     } else if (path.startsWith("/files/") && method === "GET") {
         const fileId = path.split("/")[2];
         if (!fileId) return;
