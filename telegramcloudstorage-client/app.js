@@ -4,8 +4,8 @@
 window.onload = async () => {
     if (window.Telegram.WebApp) {
         window.Telegram.WebApp.expand();
-        const { id, firstname, lastname, username, photo_url } = window.Telegram.WebApp.initDataUnsafe.user;
-        document.querySelector(".profile__header h1").textContent = `${firstname} ${lastname}`;
+        const { id, first_name, last_name, username, photo_url } = window.Telegram.WebApp.initDataUnsafe.user;
+        document.querySelector(".profile__header h1").textContent = `${first_name} ${last_name}`;
         document.querySelector(".profile__header p").textContent = `@${username}`;
         try {
             const response = await fetch(`http://localhost:3000/profiles/${id}`);
